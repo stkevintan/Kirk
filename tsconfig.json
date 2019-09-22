@@ -1,0 +1,17 @@
+{
+  "include": ["./web/**/*.js", "./web/**/*.ts"],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true,
+    "baseUrl": ".",
+    "allowJs": true,
+    "checkJs": false,
+    "paths": {
+      "pkg/*": ["./pkg/*", "./pkg/*/index"],
+      "web/*": ["./web/*", "./web/*/index"]
+    }
+  }
+}
+
