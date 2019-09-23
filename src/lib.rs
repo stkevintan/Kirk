@@ -1,7 +1,7 @@
 #![recursion_limit = "512"]
-
-mod utils;
 mod app;
+mod common;
+mod utils;
 
 use wasm_bindgen::prelude::*;
 
@@ -11,12 +11,13 @@ use wasm_bindgen::prelude::*;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-
 #[wasm_bindgen]
 pub fn run_app() -> Result<(), JsValue> {
-    utils::set_panic_hook();
-    web_logger::init();
-    // log::info!("start");
-    yew::start_app::<app::App>();
-    Ok(())
+  utils::set_panic_hook();
+  web_logger::init();
+  // log::info!("start");
+  yew::start_app::<app::App>();
+  // run..send_message(app::Msg::FetchPosts);
+  // app::App::fetch();
+  Ok(())
 }
