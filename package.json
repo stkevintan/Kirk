@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "description": "create an app to consume rust-generated wasm packages",
   "scripts": {
-    "build": "webpack --config webpack.config.js",
-    "start": "webpack-dev-server --color --contentBase ./dist"
+    "build": "webpack --env.mode production",
+    "start": "webpack-dev-server --env.mode development"
   },
   "repository": {
     "type": "git",
@@ -26,9 +26,13 @@
     "@wasm-tool/wasm-pack-plugin": "^1.0.0",
     "clean-webpack-plugin": "^3.0.0",
     "css-loader": "^3.2.0",
+    "cssnano": "^4.1.10",
+    "file-loader": "^4.2.0",
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
+    "mini-css-extract-plugin": "^0.8.0",
+    "postcss-loader": "^3.0.0",
     "style-loader": "^1.0.0",
     "ts-loader": "^6.1.0",
     "typescript": "^3.6.3",

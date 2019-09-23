@@ -7,6 +7,9 @@ use yew::format::{Json, Nothing};
 use yew::services::fetch::{FetchService, FetchTask, Request, Response};
 use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};
 
+mod search;
+use search::Search;
+
 pub struct App {
   link: ComponentLink<App>,
   fetch_service: FetchService,
@@ -108,56 +111,14 @@ impl Renderable<App> for App {
   fn view(&self) -> Html<Self> {
     info!("rendered!");
     html! {
-      <section class="layout">
-      <div id="sidedrawer" class="mui--no-user-select">
-    // Side drawer content goes here -->
-    <div id="sidedrawer-brand" class="mui--appbar-line-height">
-        <span class="mui--text-title">{"Kirk"} </span>
-    </div>
-    <div class="mui-divider"></div>
-    <ul>
-        <li>
-      <strong>{self.get_total()}</strong>
-      <ul>
-          <li><a href="#">{"Item 1"}</a></li>
-          <li><a href="#">{"Item 2"}</a></li>
-          <li><a href="#">{"Item 3"}</a></li>
-      </ul>
-        </li>
-        <li>
-      <strong>{"Category 2"}</strong>
-      <ul>
-          <li><a href="#">{"Item 1"}</a></li>
-          <li><a href="#">{"Item 2"}</a></li>
-          <li><a href="#">{"Item 3"}</a></li>
-      </ul>
-        </li>
-        <li>
-      <strong>{"Category 3"}</strong>
-        </li>
-    </ul>
+    <section id="layout">
+      { self.header() }
+      <div id="body">
+        { self.sidebar() }
+        { self.main() }
       </div>
-      <header id="header">
-    <div class="mui-appbar mui--appbar-line-height">
-        <div class="mui-container-fluid">
-      <a class="sidedrawer-toggle mui--visible-xs-inline-block mui--visible-sm-inline-block js-show-sidedrawer">{ "☰ " }</a>
-      <a class="sidedrawer-toggle mui--hidden-xs mui--hidden-sm js-hide-sidedrawer">
-        {"☰"}
-      </a>
-      <span class="mui--text-title mui--visible-xs-inline-block">{"Kirk Blog"}</span>
-        </div>
-    </div>
-      </header>
-      <div id="content-wrapper">
-    // Main content goes here -->
-      </div>
-      <footer id="footer">
-    <div class="mui-container-fluid">
-        <br />{ "Made with ♥ by "}<a href="https://www.muicss.com">{"MUI"}</a>
-    </div>
-      </footer>
-      </section>
-      }
+    </section>
+    }
   }
 }
 
@@ -170,5 +131,35 @@ impl App {
       .as_ref()
       .map(|x| x.total)
       .unwrap_or(0)
+  }
+
+  fn header(&self) -> Html<App> {
+    html! {
+      <section id="header">
+        <div class="header-logo">{ "Kirk" } </div>
+        <div class="flex-grow" />
+      </section>
+    }
+  }
+
+  fn main(&self) -> Html<App> {
+    html!(
+      <div id="main">
+        {self.get_total()}
+      </div>
+    )
+  }
+
+  fn sidebar(&self) -> Html<App> {
+    html!(
+      <div id="sidebar">
+         <Search placeholder="Search keywords..." />
+         <ul>
+          <li>{ "Home" }</li>
+          <li>{ "Archive" }</li>
+          <li>{ "About" }</li>
+        </ul>
+      </div>
+    )
   }
 }
