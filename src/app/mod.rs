@@ -5,16 +5,18 @@ use log::*;
 use serde_derive::Deserialize;
 use yew::format::{Json, Nothing};
 use yew::services::fetch::{FetchService, FetchTask, Request, Response};
+use yew::services::Task;
 use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};
 
 mod search;
 use search::Search;
+mod loading;
+use loading::Loading;
 
 pub struct App {
   link: ComponentLink<App>,
   fetch_service: FetchService,
   state: State,
-  ft: Option<FetchTask>,
 }
 
 static POSTS_URL: &str = "https://yapi.bytedance.net/mock/844/xztech/blog/v1/posts/";
@@ -40,9 +42,9 @@ pub struct Post {
   covers: Vec<String>,
 }
 
-#[derive(Deserialize)]
 pub struct State {
   post_result: Option<PageResult<Post>>,
+  ft: Option<FetchTask>,
 }
 
 pub enum Msg {
@@ -55,9 +57,11 @@ impl Component for App {
   type Message = Msg;
   type Properties = ();
   fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-    let state = State { post_result: None };
-    App {
+    let state = State {
       ft: None,
+      post_result: None,
+    };
+    App {
       link,
       fetch_service: FetchService::new(),
       state,
@@ -89,8 +93,8 @@ impl Component for App {
           },
         );
         let request = Request::get(POSTS_URL).body(Nothing).unwrap();
-        let task = self.fetch_service.fetch(request, callback);
-        self.ft = Some(task);
+        self.state.ft = Some(self.fetch_service.fetch(request, callback));
+        // self.state.ft = Some(task);
       }
       Msg::FetchReady(result) => {
         trace!("self.state.post_result {:?}", result);
@@ -133,11 +137,26 @@ impl App {
       .unwrap_or(0)
   }
 
+  fn get_fetching(&self) -> bool {
+    if let Some(task) = &self.state.ft {
+      task.is_active()
+    } else {
+      false
+    }
+  }
+
   fn header(&self) -> Html<App> {
     html! {
       <section id="header">
-        <div class="header-logo">{ "Kirk" } </div>
+        <div class="header__logo">
+        <span class="img-spaceship" />
+        <span>{ "Kirk" }</span>
+        </div>
         <div class="flex-grow" />
+        <ul class="header__menus">
+          <li><i class="iconfont icon-github-circle" /></li>
+          <li><i class="iconfont icon-rss" /></li>
+        </ul>
       </section>
     }
   }
@@ -145,6 +164,7 @@ impl App {
   fn main(&self) -> Html<App> {
     html!(
       <div id="main">
+        <Loading loading=self.get_fetching() />
         {self.get_total()}
       </div>
     )
@@ -155,9 +175,9 @@ impl App {
       <div id="sidebar">
          <Search placeholder="Search keywords..." />
          <ul>
-          <li>{ "Home" }</li>
-          <li>{ "Archive" }</li>
-          <li>{ "About" }</li>
+          <li class="active"><i class="iconfont icon-home" />{ "Home" }</li>
+          <li><i class="iconfont icon-archive" />{ "Archive" }</li>
+          <li><i class="iconfont icon-account" />{ "About Me" }</li>
         </ul>
       </div>
     )
