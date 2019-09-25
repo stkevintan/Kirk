@@ -1,8 +1,8 @@
 #![recursion_limit = "512"]
 mod app;
 mod common;
+mod components;
 mod utils;
-
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
