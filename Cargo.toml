@@ -11,6 +11,8 @@ crate-type = ["cdylib", "rlib"]
 default = ["console_error_panic_hook"]
 
 [dependencies]
+pulldown-cmark = "0.6.0"
+stdweb = "0.4.2"
 log = "0.4"
 strum = "0.13"
 strum_macros = "0.13"

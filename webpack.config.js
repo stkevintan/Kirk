@@ -36,7 +36,7 @@ module.exports = ({ mode } = { mode: 'development' }) => {
     mode,
     module: {
       rules: [
-        { test: /\.tsx?$/, loader: 'ts-loader' },
+        { test: /\.(js|ts)x?$/, loader: 'ts-loader' },
         {
           test: /\.less$/,
           use: [

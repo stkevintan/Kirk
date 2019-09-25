@@ -80,7 +80,18 @@ impl Component for Posts {
       }
       Msg::FetchReady(result) => {
         trace!("self.state.post_result {:?}", result);
-        self.state.posts = result;
+        self.state.posts = result
+          .into_iter()
+          .map(|post| types::Post {
+            labels: post
+              .labels
+              .clone()
+              .into_iter()
+              .filter(|label| label.name != "blog")
+              .collect(),
+            ..post
+          })
+          .collect();
       }
       Msg::SetPagination(page, per_page, last_page) => {
         self.state.page = page;
@@ -98,14 +109,15 @@ impl Component for Posts {
   }
 }
 
-impl Renderable<Posts> for Posts {
+impl<'a> Renderable<Posts> for Posts {
   fn view(&self) -> Html<Self> {
     html!(
       <div id="main">
         <Loading loading=self.get_fetching() />
-        {self.get_total()}
-        {format!("page: {:?}, per_page: {:?}, last_page:{:?}", self.state.page, self.state.per_page, self.state.last_page)}
+        // {self.get_total()}
+        <div class="post-list">
         {for self.state.posts.iter().map(move |post| html!{<PostItem post=post.clone() />} )}
+        </div>
       </div>
     )
   }
