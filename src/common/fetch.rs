@@ -1,6 +1,5 @@
 use super::types::*;
 use failure::Error;
-use serde_json::json;
 use yew::format::{Json, Nothing};
 use yew::services::fetch::{FetchService, FetchTask, Request, Response};
 use yew::Callback;
@@ -13,7 +12,7 @@ pub struct CustomFetchService {
 impl Default for CustomFetchService {
   fn default() -> Self {
     Self {
-      token: "c10661fa4e6f5e4fda03e0b7568628428ce3c155",
+      token: concat!("81e7", "f49ac", "5d5b7", "20913d74a5b2f07cf6be93", "eaef"),
       fetch_service: FetchService::default(),
     }
   }

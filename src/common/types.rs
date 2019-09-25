@@ -1,30 +1,30 @@
 use serde_derive::Deserialize;
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 pub struct User {
-  login: String,
-  id: i32,
-  avatar_url: String,
-  url: String,
+  pub login: String,
+  pub id: i32,
+  pub avatar_url: String,
+  pub url: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 pub struct Label {
-  id: i32,
-  url: String,
-  name: String,
-  color: String,
+  pub id: i32,
+  pub url: String,
+  pub name: String,
+  pub color: String,
 }
 
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, PartialEq, Clone)]
 pub struct Post {
-  id: i32,
-  url: String,
-  number: i32,
-  title: String,
-  user: User,
-  labels: Vec<Label>,
-  created_at: String,
-  updated_at: String,
-  body: String,
+  pub id: i32,
+  pub url: String,
+  pub number: i32,
+  pub title: String,
+  pub user: User,
+  pub labels: Vec<Label>,
+  pub created_at: String,
+  pub updated_at: String,
+  pub body: String,
 }

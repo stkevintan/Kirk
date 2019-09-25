@@ -1,5 +1,6 @@
 use crate::common::*;
 use crate::components::Loading;
+use crate::components::PostItem;
 
 #[warn(unused_must_use)]
 use failure::Error;
@@ -104,6 +105,7 @@ impl Renderable<Posts> for Posts {
         <Loading loading=self.get_fetching() />
         {self.get_total()}
         {format!("page: {:?}, per_page: {:?}, last_page:{:?}", self.state.page, self.state.per_page, self.state.last_page)}
+        {for self.state.posts.iter().map(move |post| html!{<PostItem post=post.clone() />} )}
       </div>
     )
   }
