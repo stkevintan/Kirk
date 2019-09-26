@@ -32,8 +32,16 @@ impl Component for PostItem {
     }
   }
 
-  // fn mounted() -> ShouldRender {
-  // }
+  fn mounted(&mut self) -> ShouldRender {
+    js! {
+      if (window.Prism) {
+        window.Prism.highlightAll(true, () => {
+          console.log("highlight done");
+        })
+      }
+    };
+    false
+  }
   fn update(&mut self, _: Self::Message) -> ShouldRender {
     false
   }

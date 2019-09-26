@@ -1,12 +1,14 @@
 #![recursion_limit = "512"]
+
 #[macro_use]
 extern crate stdweb;
+
 mod app;
 mod common;
 mod components;
 mod utils;
+use stdweb::web::{document, IParentNode};
 use wasm_bindgen::prelude::*;
-
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
@@ -17,9 +19,9 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 pub fn run_app() -> Result<(), JsValue> {
   utils::set_panic_hook();
   web_logger::init();
-  // log::info!("start");
-  yew::start_app::<app::App>();
-  // run..send_message(app::Msg::FetchPosts);
-  // app::App::fetch();
+  yew::initialize();
+  let app = document().query_selector("body #app").unwrap().unwrap();
+  yew::App::<app::App>::new().mount(app);
+  yew::run_loop();
   Ok(())
 }

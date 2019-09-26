@@ -34,7 +34,7 @@ impl Renderable<App> for App {
     html! {
     <section id="layout">
       { self.header() }
-      <div id="body">
+      <div id="body" class="clearfix">
         { self.sidebar() }
         <Posts />
       </div>
