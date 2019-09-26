@@ -25,6 +25,17 @@ pub struct State {
   last_page: u32,
 }
 
+impl std::fmt::Debug for State {
+  fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    writeln!(f, "Posts: {:?}", self.posts)?;
+    writeln!(
+      f,
+      "per_page {} page {}, last_page {}",
+      self.per_page, self.page, self.last_page
+    )
+  }
+}
+
 pub enum Msg {
   FetchPosts,
   FetchReady(Vec<types::Post>),
@@ -47,39 +58,40 @@ impl Component for Posts {
   fn update(&mut self, msg: Self::Message) -> ShouldRender {
     match msg {
       Msg::FetchPosts => {
-        let callback = self.link.create_effect(
-          move |response: Response<Json<Result<Vec<types::Post>, Error>>>, dispatch| {
+        let callback = self.link.send_bunch_back(
+          move |response: Response<Json<Result<Vec<types::Post>, Error>>>| {
+            let mut ret = Vec::new();
             let (header, Json(body)) = response.into_parts();
             if let Err(err) = &body {
               trace!("error: {:?}", err);
-            } else {
-              trace!("data: {:?}", body);
             }
             if !header.status.is_success() {
               // TODO: get some hint
-              dispatch(Msg::Nope);
-              return;
+              ret.push(Msg::Nope);
+              return ret;
             }
 
             let headers = &header.headers;
             if !headers.contains_key("Link") {
-              dispatch(Msg::SetPagination(1, 30, 1));
+              //
             } else {
               let link = &headers["Link"];
               trace!("{:?}", link);
             }
 
             if let Ok(posts) = body {
-              dispatch(Msg::FetchReady(posts));
+              ret.push(Msg::SetPagination(1, 30, 1));
+              ret.push(Msg::FetchReady(posts));
             } else {
-              dispatch(Msg::Nope);
+              ret.push(Msg::Nope);
             }
+            ret
           },
         );
         self.state.ft = Some(self.fetch_service.fetch_posts(callback));
       }
       Msg::FetchReady(result) => {
-        trace!("self.state.post_result {:?}", result);
+        trace!("fetchReady {:?}", self.state);
         self.state.posts = result
           .into_iter()
           .map(|post| types::Post {
@@ -94,6 +106,7 @@ impl Component for Posts {
           .collect();
       }
       Msg::SetPagination(page, per_page, last_page) => {
+        trace!("setPagination {:?}", self.state);
         self.state.page = page;
         self.state.per_page = per_page;
         self.state.last_page = last_page;

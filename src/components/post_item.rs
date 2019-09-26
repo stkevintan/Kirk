@@ -62,6 +62,7 @@ impl PostItem {
   fn markdown_view(&self) -> Html<Self> {
     let render = js! {
       var div = document.createElement("div");
+      div.className = "markdown__body";
       div.innerHTML = @{self.parse_markdown()};
       return div;
     };

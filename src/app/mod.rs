@@ -16,7 +16,7 @@ pub enum Msg {
 impl Component for App {
   type Message = Msg;
   type Properties = ();
-  fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+  fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
     App {}
   }
 
