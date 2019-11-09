@@ -22,7 +22,8 @@ serde_json = "1"
 wasm-bindgen = "=0.2.42"
 web_logger = "0.2"
 # yew = "0.7"
-yew = { git = "https://github.com/stkevintan/yew", branch="create_effect" }
+# yew = { git = "https://github.com/stkevintan/yew", branch="create_effect" }
+yew = { path = "/Users/tankaiwen/Project/person/yew" }
 failure = "0.1.5"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by

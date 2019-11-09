@@ -33,7 +33,7 @@ impl Component for Search {
   type Properties = Props;
 
   fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
-    Search {
+    Self {
       value: props.initial,
       onclick: props.onclick,
       placeholder: props.placeholder,

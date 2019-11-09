@@ -1,5 +1,3 @@
-use log::*;
-
 use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};
 
 use super::components::Search;
@@ -30,7 +28,6 @@ impl Component for App {
 
 impl Renderable<App> for App {
   fn view(&self) -> Html<Self> {
-    info!("rendered!");
     html! {
     <section id="layout">
       { self.header() }

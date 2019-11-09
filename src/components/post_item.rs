@@ -1,3 +1,4 @@
+use crate::common::is_light_color;
 use crate::common::types;
 use log::*;
 use pulldown_cmark::{html, Options, Parser};
@@ -34,10 +35,9 @@ impl Component for PostItem {
 
   fn mounted(&mut self) -> ShouldRender {
     js! {
+      // TODO: replace it with rs highlight tool
       if (window.Prism) {
-        window.Prism.highlightAll(true, () => {
-          console.log("highlight done");
-        })
+        window.Prism.highlightAll(true)
       }
     };
     false
@@ -45,13 +45,6 @@ impl Component for PostItem {
   fn update(&mut self, _: Self::Message) -> ShouldRender {
     false
   }
-
-  // fn change(&mut self, props: Self::Properties) -> ShouldRender {
-  //   self.post = props.post;
-  //   self.class = props.class;
-  //   self.style = props.style;
-  //   true
-  // }
 }
 
 impl PostItem {
@@ -62,10 +55,7 @@ impl PostItem {
 
     let mut html_str = String::new();
     html::push_html(&mut html_str, parser);
-    trace!("{}", self.post.body);
-    trace!("{}", html_str);
     html_str
-    // markdown_to_html(&self.post.body, &ComrakOptions::default())
   }
   fn markdown_view(&self) -> Html<Self> {
     let render = js! {
@@ -92,7 +82,6 @@ impl PostItem {
           <span style={format!("background-image: url({});", self.post.user.avatar_url)} class="post-item__header__avator"  />
           <span class="post-item__header__name"><a target="_blank" href={format!("{}",self.post.user.url)}>{&self.post.user.login}</a></span>
         </li>
-        // <li class="post-item__header__created-at"><label>{"Created At: "}</label>{&self.post.created_at}</li>
         <li class="post-item__header__updated-at">
               <label><i class="iconfont icon-pencil" />{"Updated At: "}</label>
               <span>{&self.post.updated_at}</span>
@@ -110,7 +99,12 @@ impl PostItem {
         <ul class="post-item__header__tags">
           {for self.post.labels.iter().map(|label| html! {
             <li key={&label.id}>
-              <span class="tag" style=format!("background-color: #{}", label.color)>{&label.name}</span>
+              <span class="tag" style=format!(
+
+                "background-color: #{}; color: {}",
+                label.color,
+                if is_light_color(&label.color) { "#333" } else {"#fff"}
+              )>{&label.name}</span>
             </li>
           })}
         </ul>

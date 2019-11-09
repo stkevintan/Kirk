@@ -58,7 +58,7 @@ impl Component for Posts {
   fn update(&mut self, msg: Self::Message) -> ShouldRender {
     match msg {
       Msg::FetchPosts => {
-        let callback = self.link.send_bunch_back(
+        let callback = self.link.send_back_batch(
           move |response: Response<Json<Result<Vec<types::Post>, Error>>>| {
             let mut ret = Vec::new();
             let (header, Json(body)) = response.into_parts();
