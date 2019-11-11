@@ -19,12 +19,12 @@ impl Default for CustomFetchService {
 }
 
 impl CustomFetchService {
-  pub fn new(token: &'static str) -> Self {
-    Self {
-      token,
-      fetch_service: FetchService::new(),
-    }
-  }
+  // pub fn new(token: &'static str) -> Self {
+  //   Self {
+  //     token,
+  //     fetch_service: FetchService::new(),
+  //   }
+  // }
 
   #[allow(dead_code)]
   pub fn fetch_posts(

@@ -2,6 +2,7 @@ use crate::common::is_light_color;
 use crate::common::types;
 use log::*;
 use pulldown_cmark::{html, Options, Parser};
+use stdweb::js;
 use stdweb::unstable::TryFrom;
 use stdweb::web::Node;
 use yew::prelude::*;

@@ -1,7 +1,7 @@
 #![recursion_limit = "512"]
 
-#[macro_use]
-extern crate stdweb;
+// #[macro_use]
+// extern crate stdweb;
 
 mod app;
 mod common;
