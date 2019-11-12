@@ -19,11 +19,12 @@ strum_macros = "0.13"
 serde = "1"
 serde_derive = "1"
 serde_json = "1"
-wasm-bindgen = "=0.2.42"
+wasm-bindgen = "0.2.54"
 web_logger = "0.2"
 # yew = "0.7"
 # yew = { git = "https://github.com/stkevintan/yew", branch="create_effect" }
-yew = { path = "/Users/tankaiwen/Project/person/yew" }
+# yew = { path = "/Users/tankaiwen/Project/person/yew" }
+yew = "0.10.0"
 failure = "0.1.5"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
@@ -38,6 +39,7 @@ console_error_panic_hook = { version = "0.1.1", optional = true }
 #
 # Unfortunately, `wee_alloc` requires nightly Rust when targeting wasm for now.
 wee_alloc = { version = "0.4.4", optional = true }
+yew-router = "0.7.0"
 
 [dev-dependencies]
 wasm-bindgen-test = "0.2"

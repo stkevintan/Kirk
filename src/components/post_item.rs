@@ -46,6 +46,18 @@ impl Component for PostItem {
     fn update(&mut self, _: Self::Message) -> ShouldRender {
         false
     }
+
+    fn view(&self) -> Html<Self> {
+        html! {
+          <div
+             class=format!("post-item {}", self.class)
+             style=self.style
+          >
+            {self.header_view()}
+            {self.body_view()}
+          </div>
+        }
+    }
 }
 
 impl PostItem {
@@ -77,7 +89,9 @@ impl PostItem {
     fn header_view(&self) -> Html<Self> {
         html! {
           <div class="post-item__header">
-          <div class="post-item__header__title">{&self.post.title}</div>
+          <div class="post-item__header__title">
+          <a href="">{&self.post.title}</a>
+          </div>
           <ul class="post-item__header__meta">
             <li class="post-item__header__author">
               <span style={format!("background-image: url({});", self.post.user.avatar_url)} class="post-item__header__avator"  />
@@ -101,7 +115,6 @@ impl PostItem {
                 {for self.post.labels.iter().map(|label| html! {
                   <li key={&label.id}>
                     <span class="tag" style=format!(
-
                       "background-color: #{}; color: {}",
                       label.color,
                       if is_light_color(&label.color) { "#333" } else {"#fff"}
@@ -117,19 +130,6 @@ impl PostItem {
           <section class=format!("post-item__body post-item__body--{} preview", self.post.id)>
             {self.markdown_view()}
           </section>
-        }
-    }
-}
-impl Renderable<PostItem> for PostItem {
-    fn view(&self) -> Html<Self> {
-        html! {
-          <div
-             class=format!("post-item {}", self.class)
-             style=self.style
-          >
-            {self.header_view()}
-            {self.body_view()}
-          </div>
         }
     }
 }
