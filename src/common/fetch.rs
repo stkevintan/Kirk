@@ -38,4 +38,21 @@ impl CustomFetchService {
 
     self.fetch_service.fetch(request, callback)
   }
+
+  #[allow(dead_code)]
+  pub fn fetch_post(
+    &mut self,
+    id: u32,
+    callback: Callback<Response<Json<Result<Post, Error>>>>,
+  ) -> FetchTask {
+    let request = Request::get(format!(
+      "https://api.github.com/repos/stkevintan/kirk-blog/issues/{}",
+      id
+    ))
+    .header("Authorization", &format!("token {}", self.token))
+    .body(Nothing)
+    .expect("fetch posts failed");
+
+    self.fetch_service.fetch(request, callback)
+  }
 }
