@@ -1,6 +1,5 @@
 use crate::common::is_light_color;
 use crate::common::types;
-use log::*;
 use pulldown_cmark::{html, Options, Parser};
 use stdweb::js;
 use stdweb::unstable::TryFrom;
@@ -38,12 +37,12 @@ impl Component for PostItem {
   }
 
   fn mounted(&mut self) -> ShouldRender {
-    js! {
+    js! {@(no_return)
       // TODO: replace it with rs highlight tool
       if (window.Prism) {
-        window.Prism.highlightAll(true)
+        window.Prism.highlightAll(false);
       }
-    };
+    }
     false
   }
   fn update(&mut self, _: Self::Message) -> ShouldRender {
@@ -76,8 +75,12 @@ impl PostItem {
   fn markdown_view(&self) -> Html<Self> {
     let render = js! {
       var div = document.createElement("div");
+      var script = document.createElement("script");
       div.className = "markdown__body";
       div.innerHTML = @{self.parse_markdown()};
+      script.innerHTML = "if(window.Prism) { window.Prism.highlightAll(true); }";
+      div.appendChild(script);
+
       return div;
     };
     if let Ok(node) = Node::try_from(render) {

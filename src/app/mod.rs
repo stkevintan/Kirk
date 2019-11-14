@@ -1,16 +1,19 @@
 use super::components::Search;
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
-use yew_router::{prelude::*, Switch};
+use yew::prelude::*;
+use yew_router::{agent::RouteRequest, prelude::*};
 
 mod posts;
 use posts::Posts;
 
 mod post;
 use post::Post;
-pub struct App {}
+pub struct App {
+  router: Box<dyn Bridge<RouteAgent>>,
+}
 
 pub enum Msg {
   Nope,
+  Navigate(&'static str),
 }
 
 #[derive(Switch, Debug, Clone)]
@@ -26,13 +29,21 @@ pub enum AppRoute {
 impl Component for App {
   type Message = Msg;
   type Properties = ();
-  fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
-    App {}
+  fn create(_: Self::Properties, mut link: ComponentLink<Self>) -> Self {
+    let callback = link.send_back(|_| Msg::Nope);
+    let router = RouteAgent::bridge(callback);
+    App { router }
   }
 
   fn update(&mut self, msg: Self::Message) -> ShouldRender {
     match msg {
-      Msg::Nope => {}
+      Msg::Nope => {
+        return false;
+      }
+      Msg::Navigate(url) => {
+        let route = Route::from(url);
+        self.router.send(RouteRequest::ChangeRoute(route));
+      }
     };
     true
   }
@@ -82,9 +93,8 @@ impl App {
       <div id="sidebar">
          <Search placeholder="Search keywords..." />
          <ul>
-          <li class="active"><i class="iconfont icon-home" />
-          // { "Home" }
-          <RouterLink: text="Home" link="/" />
+          <li class="active" onclick=|_| Msg::Navigate("/") ><i class="iconfont icon-home" />
+          { "Home" }
           </li>
           <li><i class="iconfont icon-archive" />{ "Archive" }</li>
           <li><i class="iconfont icon-account" />{ "About Me" }</li>

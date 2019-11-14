@@ -1,19 +1,20 @@
 use crate::common::*;
+use crate::components::Errors;
 use crate::components::Loading;
 use crate::components::PostItem;
-
 #[warn(unused_must_use)]
 use failure::Error;
 use log::*;
 use yew::format::Json;
 use yew::services::fetch::{FetchTask, Response};
 use yew::services::Task;
-use yew::{html, Component, ComponentLink, Html, Renderable, ShouldRender};
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
 pub struct Posts {
   link: ComponentLink<Posts>,
   fetch_service: CustomFetchService,
   state: State,
+  error: Option<String>,
 }
 
 #[derive(Default)]
@@ -40,7 +41,7 @@ pub enum Msg {
   FetchPosts,
   FetchReady(Vec<types::Post>),
   SetPagination(u32, u32, u32),
-  Nope,
+  Error(String),
 }
 
 impl Component for Posts {
@@ -52,6 +53,7 @@ impl Component for Posts {
       link,
       fetch_service: CustomFetchService::default(),
       state,
+      error: None,
     }
   }
 
@@ -67,7 +69,10 @@ impl Component for Posts {
             }
             if !header.status.is_success() {
               // TODO: get some hint
-              ret.push(Msg::Nope);
+              ret.push(Msg::Error(format!(
+                "Request failed with status: {}",
+                header.status.as_str()
+              )));
               return ret;
             }
 
@@ -83,7 +88,7 @@ impl Component for Posts {
               ret.push(Msg::SetPagination(1, 30, 1));
               ret.push(Msg::FetchReady(posts));
             } else {
-              ret.push(Msg::Nope);
+              ret.push(Msg::Error(format!("Parsing Error: {}", body.unwrap_err(),)));
             }
             ret
           },
@@ -91,7 +96,7 @@ impl Component for Posts {
         self.state.ft = Some(self.fetch_service.fetch_posts(callback));
       }
       Msg::FetchReady(result) => {
-        trace!("fetchReady {:?}", self.state);
+        self.error = None;
         self.state.posts = result
           .into_iter()
           .map(|post| types::Post {
@@ -111,7 +116,10 @@ impl Component for Posts {
         self.state.per_page = per_page;
         self.state.last_page = last_page;
       }
-      Msg::Nope => {}
+      Msg::Error(reason) => {
+        self.error = Some(reason);
+        self.state.posts = Vec::default();
+      }
     };
     true
   }
@@ -130,17 +138,13 @@ impl Component for Posts {
         // TODO: make post not clone.
         {for self.state.posts.iter().map(move |post| html!{<PostItem is_preview=true post=post.clone() />} )}
         </div>
+        <Errors error=self.error.clone() />
       </div>
     )
   }
 }
 
 impl Posts {
-  // fn get_total(&self) -> usize {
-  //   trace!("post_result: {:?}", self.state.posts);
-  //   self.state.posts.len()
-  // }
-
   fn get_fetching(&self) -> bool {
     if let Some(task) = &self.state.ft {
       task.is_active()

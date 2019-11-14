@@ -1,4 +1,5 @@
 use crate::common::*;
+use crate::components::Errors;
 use crate::components::Loading;
 use crate::components::PostItem;
 
@@ -8,13 +9,14 @@ use log::*;
 use yew::format::Json;
 use yew::services::fetch::{FetchTask, Response};
 use yew::services::Task;
-use yew::{html, prelude::*, Component, ComponentLink, Html, Renderable, ShouldRender};
+use yew::{html, prelude::*, Component, ComponentLink, Html, ShouldRender};
 
 pub struct Post {
   link: ComponentLink<Post>,
   fetch_service: CustomFetchService,
   state: State,
   id: u32,
+  error: Option<String>,
 }
 
 #[derive(Properties, PartialEq)]
@@ -32,7 +34,7 @@ pub struct State {
 pub enum Msg {
   FetchPost,
   FetchReady(types::Post),
-  Error,
+  Error(String),
 }
 
 impl Component for Post {
@@ -44,6 +46,7 @@ impl Component for Post {
       link,
       fetch_service: CustomFetchService::default(),
       state,
+      error: None,
       id: props.id,
     }
   }
@@ -59,19 +62,23 @@ impl Component for Post {
       Msg::FetchPost => {
         let callback = self.link.send_back(
           move |response: Response<Json<Result<types::Post, Error>>>| {
-            let Json(body) = response.into_body();
-            if let Err(err) = &body {
-              trace!("error: {:?}", err);
+            let (headers, Json(body)) = response.into_parts();
+            if !headers.status.is_success() {
+              return Msg::Error(format!(
+                "Response with error header: {}",
+                headers.status.as_str()
+              ));
             }
             if let Ok(post) = body {
               return Msg::FetchReady(post);
             }
-            return Msg::Error;
+            return Msg::Error(format!("Parsing error: {}", body.unwrap_err()));
           },
         );
         self.state.ft = Some(self.fetch_service.fetch_post(self.id, callback));
       }
       Msg::FetchReady(post) => {
+        self.error = None;
         self.state.post = Some(types::Post {
           labels: post
             .labels
@@ -82,7 +89,7 @@ impl Component for Post {
           ..post
         })
       }
-      Msg::Error => {}
+      Msg::Error(err) => self.error = Some(err),
     };
     true
   }
@@ -96,15 +103,16 @@ impl Component for Post {
     html!(
       <div id="main">
         <Loading loading=self.get_fetching() />
+        <Errors error=self.error.clone() />
         {
-          if let Some(post) = self.state.post.clone() {
+          if let Some(post) = &self.state.post.as_ref() {
             html!{
               <div class="post__wrap">
-              <PostItem is_preview=false post=post />
+                <PostItem is_preview=false post=post.clone() />
               </div>
             }
           } else {
-            html!{"parse error!"}
+            html!{}
           }
         }
       </div>
