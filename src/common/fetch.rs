@@ -29,9 +29,16 @@ impl CustomFetchService {
   #[allow(dead_code)]
   pub fn fetch_posts(
     &mut self,
+    pagination: &Pagination,
     callback: Callback<Response<Json<Result<Vec<Post>, Error>>>>,
   ) -> FetchTask {
-    let request = Request::get("https://api.github.com/repos/stkevintan/kirk-blog/issues")
+    let path = "https://api.github.com/repos/stkevintan/kirk-blog/issues";
+    let url = format!(
+      "{}?page={}&per_page={}",
+      path, pagination.current, pagination.per_page
+    );
+
+    let request = Request::get(url)
       .header("Authorization", &format!("token {}", self.token))
       .body(Nothing)
       .expect("fetch posts failed");
@@ -51,7 +58,7 @@ impl CustomFetchService {
     ))
     .header("Authorization", &format!("token {}", self.token))
     .body(Nothing)
-    .expect("fetch posts failed");
+    .expect("fetch post failed");
 
     self.fetch_service.fetch(request, callback)
   }

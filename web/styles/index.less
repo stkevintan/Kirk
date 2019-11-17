@@ -51,12 +51,6 @@ html {
   -webkit-font-smoothing: antialiased;
 }
 
-@import './loading.less';
-@import './error.less';
-@import './input.less';
-@import './post.less';
-@import './markdown.less';
-
 #app,
 #layout,
 #body,
@@ -119,36 +113,6 @@ html {
   overflow: hidden;
 }
 
-#sidebar {
-  float: left;
-  width: 305px;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
-  ul {
-    list-style: none;
-    padding: 0;
-    display: block;
-    text-align: left;
-    font-size: 16px;
-    li {
-      display: block;
-      cursor: pointer;
-      padding: 12px 24px;
-      transition: all 0.3s ease-in;
-      &.active {
-        background: rgba(0, 0, 0, 0.05);
-        color: #4177f6;
-      }
-      &:hover {
-        background: rgba(0, 0, 0, 0.05);
-      }
-      .iconfont {
-        font-size: 23px;
-        margin-right: 5px;
-        vertical-align: middle;
-      }
-    }
-  }
-}
 .flex-grow {
   flex: 1 1 auto;
 }
@@ -204,3 +168,10 @@ i.iconfont {
 
   // background-color: #e0e0e0;
 }
+
+@import './loading.less';
+@import './error.less';
+@import './sidebar.less';
+@import './input.less';
+@import './post.less';
+@import './markdown.less';

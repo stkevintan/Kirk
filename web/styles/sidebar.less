@@ -1,0 +1,47 @@
+#sidebar {
+  float: left;
+  width: 305px;
+  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-flow: nowrap column;
+  height: 100%;
+
+  .input__search,
+  .footer {
+    flex: 0 0 auto;
+  }
+  .footer {
+    padding: 15px;
+    border-top: 1px solid #d8d7d6;
+    background: #e2e2e2;
+    color: #777;
+    text-shadow: 1px 0.5px 2px #e8e8e8;
+  }
+  ul {
+    flex: 1 1 auto;
+    overflow: hidden auto;
+    list-style: none;
+    padding: 0;
+    display: block;
+    text-align: left;
+    font-size: 16px;
+    li {
+      display: block;
+      cursor: pointer;
+      padding: 12px 24px;
+      transition: all 0.3s ease-in;
+      &.active {
+        background: rgba(0, 0, 0, 0.05);
+        color: #4177f6;
+      }
+      &:hover {
+        background: rgba(0, 0, 0, 0.05);
+      }
+      .iconfont {
+        font-size: 23px;
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+    }
+  }
+}

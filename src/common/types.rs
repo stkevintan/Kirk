@@ -29,3 +29,19 @@ pub struct Post {
   pub updated_at: String,
   pub body: String,
 }
+#[derive(Debug, PartialEq, Clone)]
+pub struct Pagination {
+  pub current: u32,
+  pub last: u32,
+  pub per_page: u32,
+}
+
+impl Default for Pagination {
+  fn default() -> Self {
+    Self {
+      current: 1,
+      last: 1,
+      per_page: 1,
+    }
+  }
+}
