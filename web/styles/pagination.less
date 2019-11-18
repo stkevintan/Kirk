@@ -1,0 +1,42 @@
+.pagination-wrap {
+  position: relative;
+  margin: 20px 0;
+  text-align: right;
+  padding: 0 32px;
+}
+
+.pagination {
+  color: #333;
+  font-size: 17px;
+  line-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  .pagination-item {
+    cursor: pointer;
+    border-radius: 2px;
+    padding: 0 12px;
+    text-align: center;
+    &.pagination-active {
+      color: #fff;
+      background-color: @primary-color;
+      cursor: default;
+    }
+    &.disabled {
+      color: @secondary-text-color;
+      background: #fff;
+    }
+    .iconfont {
+      font-size: 24px;
+      transform: translateY(0px);
+    }
+    &.pagination-ellipsis-left,
+    &.pagination-ellipsis-right {
+      color: @secondary-text-color;
+      cursor: default;
+    }
+    &:not(.disabled):not(.pagination-active):not(.pagination-ellipsis):hover {
+      background: #f0f0f0;
+    }
+    transition: background 0.15s linear;
+  }
+}
