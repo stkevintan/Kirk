@@ -1,5 +1,5 @@
 use yew::prelude::*;
-use yew_router::prelude::*;
+use yew_router::{agent::RouteRequest, prelude::*};
 
 mod posts;
 use posts::Posts;
@@ -9,7 +9,9 @@ use post::Post;
 
 mod sidebar;
 use sidebar::Sidebar;
-pub struct App {}
+pub struct App {
+  router: Box<dyn Bridge<RouteAgent>>,
+}
 
 #[derive(Switch, Debug, Clone)]
 pub enum AppRoute {
@@ -23,16 +25,30 @@ pub enum AppRoute {
   PageNotFound(Option<String>),
 }
 
+pub enum Msg {
+  GoHome,
+  Nope,
+}
+
 impl Component for App {
-  type Message = ();
+  type Message = Msg;
   type Properties = ();
 
-  fn create(_: Self::Properties, mut _link: ComponentLink<Self>) -> Self {
-    Self {}
+  fn create(_: Self::Properties, mut link: ComponentLink<Self>) -> Self {
+    let callback = link.send_back(|_| Msg::Nope);
+    let router = RouteAgent::bridge(callback);
+    Self { router }
   }
 
-  fn update(&mut self, _msg: Self::Message) -> ShouldRender {
-    false
+  fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    match msg {
+      Msg::GoHome => {
+        let route = Route::from("/");
+        self.router.send(RouteRequest::ChangeRoute(route));
+        true
+      }
+      Msg::Nope => false,
+    }
   }
   fn view(&self) -> Html<Self> {
     html! {
@@ -63,7 +79,7 @@ impl App {
   fn header(&self) -> Html<App> {
     html! {
       <section id="header">
-        <div class="header__logo">
+        <div onclick=|_|Msg::GoHome class="header__logo">
         <span class="img-spaceship" />
         <span>{ "Kirk" }</span>
         </div>

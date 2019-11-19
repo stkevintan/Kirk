@@ -204,7 +204,9 @@ impl Component for Posts {
         // {self.get_total()}
         <div class="post__wrap">
         // TODO: make post not clone.
-        {for self.state.posts.iter().map(move |post| html!{<PostItem is_preview=true post=post.clone() />} )}
+        <div class="post__list">
+          {for self.state.posts.iter().map(move |post| html!{<PostItem is_preview=true post=post.clone() />} )}
+        </div>
         <Pagination
           pagination=self.pagination.clone()
           on_page_change=|x:u32| Msg::SetPagination(types::Pagination{

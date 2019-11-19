@@ -123,7 +123,7 @@ impl Component for Comments {
     html! {
       <div class=format!("comments {}", self.get_status())>
         <div class="comment-header">
-          <h2 class="comment-header-title">{"Comments"}</h2>
+          <h2 class="comment-header-title" onclick=|_|Msg::Toggle>{"Comments"}</h2>
           <span class="comment-header-count">{format!("({})", self.props.count)}</span>
           <span class="flex-grow" />
           <a href="javascript:void(0)" class="comment-toggle" onclick=|_|Msg::Toggle>

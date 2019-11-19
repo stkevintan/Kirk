@@ -1,8 +1,10 @@
 const path = require('path')
+const webpack = require('webpack')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const HtmlWebPackPlugin = require('html-webpack-plugin')
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { InjectManifest } = require('workbox-webpack-plugin')
 
 const createCssLoader = (mode = 'development') => {
   return /development|staging/.test(mode)
@@ -78,6 +80,9 @@ module.exports = ({ mode } = { mode: 'development' }) => {
       new CleanWebpackPlugin({
         baseUrl: __dirname
       }),
+      new webpack.DefinePlugin({
+        BUILD_TIME: Date.now()
+      }),
       new HtmlWebPackPlugin({
         inject: true,
         template: './web/index.ejs'
@@ -88,6 +93,13 @@ module.exports = ({ mode } = { mode: 'development' }) => {
       }),
       new WasmPackPlugin({
         crateDirectory: path.resolve(__dirname, '.')
+      }),
+      new InjectManifest({
+        importWorkboxFrom: 'local',
+        swSrc: path.join('web', 'sw.js'),
+        swDest: 'service-worker.js',
+        include: [/\.(js|css|wasm)$/, /\.(svg|png|jpg)$/],
+        exclude: [/\.html$/]
       })
     ],
     ...getExtraConf(mode)
@@ -107,8 +119,8 @@ const getExtraConf = (mode = 'development') => {
         devServer: {
           publicPath: '/',
           host: '127.0.0.1',
-          port: 3001,
-          historyApiFallback: true,
+          port: 3000,
+          // historyApiFallback: true,
           contentBase: './dist'
         }
       }
