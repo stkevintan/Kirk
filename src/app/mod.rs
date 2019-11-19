@@ -17,6 +17,8 @@ pub enum AppRoute {
   Post(u32),
   #[to = "/!"]
   Index,
+  #[to = "/posts?page={current}"]
+  Posts(u32),
   #[to = "/404"]
   PageNotFound(Option<String>),
 }
@@ -42,7 +44,8 @@ impl Component for App {
         render = Router::render(|switch: AppRoute| {
           match switch {
             AppRoute::Post(id) => html!{<Post id=id />},
-            AppRoute::Index => html!{<Posts />},
+            AppRoute::Index => html!{<Posts current=1 />},
+            AppRoute::Posts(current) => html!{<Posts current=current />},
             AppRoute::PageNotFound(x) => html!{format!("404 url: {:?}", x)}
           }
         })

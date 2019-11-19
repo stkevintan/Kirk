@@ -8,10 +8,7 @@ use yew::prelude::*;
 use yew::virtual_dom::VNode;
 use yew_router::prelude::*;
 pub struct PostItem {
-  post: types::Post,
-  style: String,
-  class: String,
-  is_preview: bool,
+  props: Props,
 }
 
 #[derive(Properties, PartialEq)]
@@ -28,12 +25,7 @@ impl Component for PostItem {
   type Properties = Props;
 
   fn create(props: Self::Properties, _: ComponentLink<Self>) -> Self {
-    Self {
-      post: props.post,
-      class: props.class,
-      style: props.style,
-      is_preview: props.is_preview,
-    }
+    Self { props }
   }
 
   fn mounted(&mut self) -> ShouldRender {
@@ -49,15 +41,20 @@ impl Component for PostItem {
     false
   }
 
+  fn change(&mut self, props: Self::Properties) -> ShouldRender {
+    self.props = props;
+    true
+  }
+
   fn view(&self) -> Html<Self> {
     html! {
-      <div
-         class=format!("post-item {}", self.class)
-         style=self.style
+      <article
+         class=format!("post-item {}", self.props.class)
+         style=self.props.style
       >
         {self.header_view()}
         {self.body_view()}
-      </div>
+      </article>
     }
   }
 }
@@ -66,7 +63,7 @@ impl PostItem {
   fn parse_markdown(&self) -> String {
     let mut options = Options::empty();
     options.insert(Options::ENABLE_STRIKETHROUGH);
-    let parser = Parser::new_ext(self.post.body.as_str(), options);
+    let parser = Parser::new_ext(self.props.post.body.as_str(), options);
 
     let mut html_str = String::new();
     html::push_html(&mut html_str, parser);
@@ -97,21 +94,21 @@ impl PostItem {
       <div class="post-item__header">
       <div class="post-item__header__title">
       {
-        if self.is_preview {
-          html!(<RouterLink: text=&self.post.title, link=format!("/posts/{}", self.post.number), />)
+        if self.props.is_preview {
+          html!(<RouterLink: text=&self.props.post.title, link=format!("/posts/{}", self.props.post.number), />)
         }else {
-          html!{&self.post.title}
+          html!{&self.props.post.title}
         }
       }
       </div>
       <ul class="post-item__header__meta">
         <li class="post-item__header__author">
-          <span style={format!("background-image: url({});", self.post.user.avatar_url)} class="post-item__header__avator"  />
-          <span class="post-item__header__name"><a target="_blank" href={format!("{}",self.post.user.html_url)}>{&self.post.user.login}</a></span>
+          <span style={format!("background-image: url({});", self.props.post.user.avatar_url)} class="post-item__header__avator"  />
+          <span class="post-item__header__name"><a target="_blank" href={format!("{}",self.props.post.user.html_url)}>{&self.props.post.user.login}</a></span>
         </li>
         <li class="post-item__header__updated-at">
               <label><i class="iconfont icon-ic_query_builder_px" /></label>
-              <span>{&self.post.updated_at}</span>
+              <span>{&self.props.post.updated_at}</span>
          </li>
       </ul>
       {self.tags_view()}
@@ -119,12 +116,12 @@ impl PostItem {
     }
   }
   fn tags_view(&self) -> Html<Self> {
-    if self.post.labels.len() == 0 {
+    if self.props.post.labels.len() == 0 {
       html! {}
     } else {
       html! {
         <ul class="post-item__header__tags">
-          {for self.post.labels.iter().map(|label| html! {
+          {for self.props.post.labels.iter().map(|label| html! {
             <li key={&label.id}>
               <span class="tag" style=format!(
                 "background-color: #{}; color: {}",
@@ -139,7 +136,7 @@ impl PostItem {
   }
   fn body_view(&self) -> Html<Self> {
     html! {
-      <section class=format!("post-item__body post-item__body--{} {}", self.post.id, if self.is_preview { "preview" } else {""})>
+      <section class=format!("post-item__body post-item__body--{} {}", self.props.post.id, if self.props.is_preview { "preview" } else {""})>
         {self.markdown_view()}
       </section>
     }

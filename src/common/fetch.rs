@@ -62,4 +62,21 @@ impl CustomFetchService {
 
     self.fetch_service.fetch(request, callback)
   }
+
+  #[allow(dead_code)]
+  pub fn fetch_comments(
+    &mut self,
+    id: u32,
+    callback: Callback<Response<Json<Result<Vec<Comment>, Error>>>>,
+  ) -> FetchTask {
+    let request = Request::get(format!(
+      "https://api.github.com/repos/stkevintan/kirk-blog/issues/{}/comments",
+      id
+    ))
+    .header("Authorization", &format!("token {}", self.token))
+    .body(Nothing)
+    .expect("fetch comments failed");
+
+    self.fetch_service.fetch(request, callback)
+  }
 }

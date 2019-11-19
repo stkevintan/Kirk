@@ -1,5 +1,7 @@
 @primary-color: rgb(25, 118, 210);
 @secondary-color: #673ab7;
+@gray-background-color: #f0f0f0;
+@border-color: #e8e8e8;
 @secondary-text-color: #999;
 * {
   box-sizing: border-box;
@@ -31,7 +33,7 @@ body {
   margin: 0;
   padding: 0;
   height: 100vh;
-  background-color: #eee;
+  // background-color: #eee;
 }
 
 html,
@@ -48,7 +50,7 @@ html {
   font-family: Roboto, 'Helvetica Neue', 'microsoft yahei', Arial sans-serif;
   font-size: 16px;
   line-height: 1.5em;
-  background: #f0f0f0;
+  background: @gray-background-color;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -175,5 +177,6 @@ i.iconfont {
 @import './sidebar.less';
 @import './input.less';
 @import './post.less';
+@import './comments.less';
 @import './markdown.less';
 @import './pagination.less';

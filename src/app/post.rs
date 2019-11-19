@@ -1,4 +1,5 @@
 use crate::common::*;
+use crate::components::Comments;
 use crate::components::Errors;
 use crate::components::Loading;
 use crate::components::PostItem;
@@ -109,6 +110,7 @@ impl Component for Post {
             html!{
               <div class="post__wrap">
                 <PostItem is_preview=false post=post.clone() />
+                <Comments id=self.id count=post.comments />
               </div>
             }
           } else {

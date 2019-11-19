@@ -10,20 +10,27 @@ use stdweb::{js, unstable::TryInto};
 use yew::format::Json;
 use yew::services::fetch::{FetchTask, Response};
 use yew::services::Task;
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
-
+use yew::{html, Bridge, Bridged, Component, ComponentLink, Html, Properties, ShouldRender};
+use yew_router::{agent::RouteRequest, prelude::*};
 pub struct Posts {
   link: ComponentLink<Posts>,
   fetch_service: CustomFetchService,
   state: State,
   error: Option<String>,
   pagination: types::Pagination,
+  router: Box<dyn Bridge<RouteAgent>>,
 }
 
 #[derive(Default)]
 pub struct State {
   posts: Vec<types::Post>,
   ft: Option<FetchTask>,
+}
+
+#[derive(Properties)]
+pub struct Props {
+  #[props(required)]
+  pub current: u32,
 }
 
 // impl std::fmt::Debug for State {
@@ -42,18 +49,21 @@ pub enum Msg {
   FetchReady(Vec<types::Post>),
   SetPagination(types::Pagination),
   Error(String),
+  Nope,
 }
 
 impl Component for Posts {
   type Message = Msg;
-  type Properties = ();
-  fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+  type Properties = Props;
+  fn create(props: Self::Properties, mut link: ComponentLink<Self>) -> Self {
+    let callback = link.send_back(|_| Msg::Nope);
     Posts {
       link,
       fetch_service: CustomFetchService::default(),
       state: State::default(),
       error: None,
-      pagination: types::Pagination::default(),
+      pagination: types::Pagination::from_current(props.current),
+      router: RouteAgent::bridge(callback),
     }
   }
 
@@ -122,29 +132,64 @@ impl Component for Posts {
           })
           .collect();
       }
+
       Msg::SetPagination(pagination) => {
         macro_rules! check_and_set {
-          ($k: ident) => {
+          ($k: ident, $changed: ident) => {
+            let $changed;
             if pagination.$k != 0 {
+              $changed = pagination.$k != self.pagination.$k;
               self.pagination.$k = pagination.$k;
+            } else {
+              $changed = false;
             }
           };
         };
-        check_and_set! {current};
-        check_and_set! {last};
-        check_and_set! {per_page};
+        check_and_set! {current, current_changed};
+        check_and_set! {last, last_changed};
+        check_and_set! {per_page, per_page_changed};
         // correct the last
+        let mut last_changed = last_changed;
         if self.pagination.last < self.pagination.current {
-          self.pagination.last = self.pagination.current
+          self.pagination.last = self.pagination.current;
+          last_changed = true
         }
+
+        if current_changed || per_page_changed {
+          self.link.send_self(Msg::FetchPosts);
+          self
+            .router
+            .send(RouteRequest::ChangeRoute(Route::from(format!(
+              "/posts?page={}",
+              self.pagination.current
+            ))));
+          return true;
+        }
+
+        if last_changed {
+          //noop
+        }
+        return false;
       }
 
       Msg::Error(reason) => {
         self.error = Some(reason);
         self.state.posts = Vec::default();
       }
+      Msg::Nope => return false,
     };
     true
+  }
+
+  fn change(&mut self, props: Self::Properties) -> ShouldRender {
+    if props.current != self.pagination.current {
+      self.link.send_self(Msg::SetPagination(types::Pagination {
+        current: props.current,
+        per_page: 0,
+        last: 0,
+      }));
+    }
+    false
   }
 
   fn mounted(&mut self) -> ShouldRender {
@@ -164,8 +209,9 @@ impl Component for Posts {
           pagination=self.pagination.clone()
           on_page_change=|x:u32| Msg::SetPagination(types::Pagination{
             current: x,
-            per_page: 0,
-            last: 0})
+            last: 0,
+            per_page: 0
+          })
         />
         </div>
 

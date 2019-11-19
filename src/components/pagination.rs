@@ -43,15 +43,19 @@ impl Component for Pagination {
       Msg::TurnLeft => {
         trace!("turn left, current is {}", self.props.pagination.current);
         if self.props.pagination.current > 1 {
-          self.props.pagination.current -= 1;
-          return true;
+          self
+            .props
+            .on_page_change
+            .emit(self.props.pagination.current - 1);
         }
         false
       }
       Msg::TurnRight => {
         if self.props.pagination.current < self.props.pagination.last {
-          self.props.pagination.current += 1;
-          return true;
+          self
+            .props
+            .on_page_change
+            .emit(self.props.pagination.current + 1);
         }
         false
       }

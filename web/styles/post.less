@@ -2,10 +2,13 @@
   height: 100%;
   position: relative;
   overflow: auto;
-}
-.post-item {
-  padding: 30px 32px;
-  border-bottom: 1px dashed #ccc;
+  article {
+    padding: 30px 32px;
+    border-bottom: 1px dashed #ccc;
+  }
+  article:last-of-type {
+    border-bottom: none;
+  }
 }
 
 .post-item__header__avator {
