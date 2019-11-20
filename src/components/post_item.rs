@@ -18,6 +18,7 @@ pub struct Props {
   pub class: String,
   pub style: String,
   pub is_preview: bool,
+  pub is_about: bool,
 }
 
 impl Component for PostItem {
@@ -101,6 +102,16 @@ impl PostItem {
         }
       }
       </div>
+      {self.meta_view()}
+      {self.tags_view()}
+      </div>
+    }
+  }
+  fn meta_view(&self) -> Html<Self> {
+    if self.props.is_about {
+      return html! {};
+    }
+    html! {
       <ul class="post-item__header__meta">
         <li class="post-item__header__author">
           <span style={format!("background-image: url({});", self.props.post.user.avatar_url)} class="post-item__header__avator"  />
@@ -109,14 +120,12 @@ impl PostItem {
         <li class="post-item__header__updated-at">
               <label><i class="iconfont icon-ic_query_builder_px" /></label>
               <span>{&self.props.post.updated_at}</span>
-         </li>
+        </li>
       </ul>
-      {self.tags_view()}
-      </div>
     }
   }
   fn tags_view(&self) -> Html<Self> {
-    if self.props.post.labels.len() == 0 {
+    if self.props.is_about || self.props.post.labels.len() == 0 {
       html! {}
     } else {
       html! {

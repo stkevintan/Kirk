@@ -28,6 +28,10 @@ a {
   text-decoration: none;
   color: @primary-color;
 }
+
+.link-color {
+  color: @primary-color;
+}
 html,
 body {
   margin: 0;
@@ -87,6 +91,8 @@ html {
   .header__logo {
     font-size: 25px;
     width: 120px;
+    height: @header_height;
+    line-height: @header_height;
     margin-right: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -143,7 +149,7 @@ i.iconfont {
   font-size: inherit;
   display: inline-block;
   font-style: normal;
-  transform: translateY(-3px);
+  // transform: translateY(-3px);
   vertical-align: middle;
 }
 

@@ -1,14 +1,17 @@
 pub mod loading;
 
-pub mod search;
+// pub mod search;
 
 pub mod comments;
 pub mod error;
 pub mod pagination;
 pub mod post_item;
-pub use loading::Loading;
+pub mod sidebar;
 
-pub use search::Search;
+pub use loading::Loading;
+pub use sidebar::Sidebar;
+
+// pub use search::Search;
 
 pub use post_item::PostItem;
 

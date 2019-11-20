@@ -5,6 +5,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin')
 const WasmPackPlugin = require('@wasm-tool/wasm-pack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { InjectManifest } = require('workbox-webpack-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 const createCssLoader = (mode = 'development') => {
   return /development|staging/.test(mode)
@@ -87,6 +88,12 @@ module.exports = ({ mode } = { mode: 'development' }) => {
         inject: true,
         template: './web/index.ejs'
       }),
+      new CopyPlugin([
+        {
+          from: 'web/static',
+          to: 'static'
+        }
+      ]),
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash:8].css',
         chunkFilename: '[id].[contenthash:8].css'
@@ -119,7 +126,7 @@ const getExtraConf = (mode = 'development') => {
         devServer: {
           publicPath: '/',
           host: '127.0.0.1',
-          port: 3000,
+          port: 3001,
           // historyApiFallback: true,
           contentBase: './dist'
         }

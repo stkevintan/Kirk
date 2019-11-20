@@ -10,59 +10,39 @@ use log::*;
 use yew::format::Json;
 use yew::services::fetch::{FetchTask, Response};
 use yew::services::Task;
-use yew::{html, prelude::*, Component, ComponentLink, Html, ShouldRender};
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
-pub struct Post {
-  link: ComponentLink<Post>,
+pub struct About {
+  link: ComponentLink<About>,
   fetch_service: CustomFetchService,
-  state: State,
-  id: u32,
   error: Option<String>,
-}
-
-#[derive(Properties, PartialEq)]
-pub struct Props {
-  #[props(required)]
-  pub id: u32,
-}
-
-#[derive(Default)]
-pub struct State {
   post: Option<types::Post>,
   ft: Option<FetchTask>,
 }
 
 pub enum Msg {
-  FetchPost,
+  FetchAbout,
   FetchReady(types::Post),
   Error(String),
 }
 
-impl Component for Post {
+impl Component for About {
   type Message = Msg;
-  type Properties = Props;
-  fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-    let state: State = State::default();
+  type Properties = ();
+  fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
     Self {
       link,
       fetch_service: CustomFetchService::default(),
-      state,
       error: None,
-      id: props.id,
+      post: None,
+      ft: None,
     }
-  }
-  fn change(&mut self, props: Self::Properties) -> ShouldRender {
-    if self.id != props.id {
-      self.id = props.id;
-      self.link.send_self(Msg::FetchPost);
-    }
-    false
   }
   fn update(&mut self, msg: Self::Message) -> ShouldRender {
     match msg {
-      Msg::FetchPost => {
+      Msg::FetchAbout => {
         let callback = self.link.send_back(
-          move |response: Response<Json<Result<types::Post, Error>>>| {
+          move |response: Response<Json<Result<Vec<types::Post>, Error>>>| {
             let (headers, Json(body)) = response.into_parts();
             if !headers.status.is_success() {
               return Msg::Error(format!(
@@ -70,22 +50,25 @@ impl Component for Post {
                 headers.status.as_str()
               ));
             }
-            if let Ok(post) = body {
-              return Msg::FetchReady(post);
+            if let Ok(posts) = body {
+              if posts.len() == 0 {
+                return Msg::Error(format!("About me is not found"));
+              }
+              return Msg::FetchReady(posts[0].clone());
             }
             return Msg::Error(format!("Parsing error: {}", body.unwrap_err()));
           },
         );
-        self.state.ft = Some(self.fetch_service.fetch_post(self.id, callback));
+        self.ft = Some(self.fetch_service.fetch_about(callback));
       }
       Msg::FetchReady(post) => {
         self.error = None;
-        self.state.post = Some(types::Post {
+        self.post = Some(types::Post {
           labels: post
             .labels
             .clone()
             .into_iter()
-            .filter(|label| label.name != "Blog")
+            .filter(|label| label.name != "about")
             .collect(),
           ..post
         })
@@ -96,7 +79,7 @@ impl Component for Post {
   }
 
   fn mounted(&mut self) -> ShouldRender {
-    self.link.send_self(Msg::FetchPost);
+    self.link.send_self(Msg::FetchAbout);
     false
   }
 
@@ -106,11 +89,11 @@ impl Component for Post {
         <Loading loading=self.get_fetching() />
         <Errors error=self.error.clone() />
         {
-          if let Some(post) = &self.state.post.as_ref() {
+          if let Some(post) = &self.post.as_ref() {
             html!{
               <div class="post__wrap post-single">
-                <PostItem is_preview=false post=post.clone() />
-                <Comments id=self.id count=post.comments />
+                <PostItem is_preview=false is_about=true post=post.clone() />
+                <Comments id=post.number count=post.comments />
               </div>
             }
           } else {
@@ -122,9 +105,9 @@ impl Component for Post {
   }
 }
 
-impl Post {
+impl About {
   fn get_fetching(&self) -> bool {
-    if let Some(task) = &self.state.ft {
+    if let Some(task) = &self.ft {
       task.is_active()
     } else {
       false

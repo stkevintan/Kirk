@@ -21,7 +21,7 @@ pub struct Label {
 pub struct Post {
   pub id: i32,
   pub url: String,
-  pub number: i32,
+  pub number: u32,
   pub comments: u32,
   pub title: String,
   pub user: User,

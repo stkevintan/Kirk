@@ -2,8 +2,11 @@
   height: 100%;
   position: relative;
   overflow: auto;
+  &.post-single article {
+    min-height: calc(100% - 57px);
+  }
   article {
-    padding: 30px 32px;
+    padding: 20px 32px;
     border-bottom: 1px dashed #ccc;
   }
   article:last-of-type {
@@ -27,6 +30,7 @@
   font-size: 2.2rem;
   font-weight: 600;
   margin-bottom: 15px;
+  line-height: 1em;
 }
 
 .post-item__header__meta {

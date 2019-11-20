@@ -29,7 +29,6 @@ pub struct State {
 
 #[derive(Properties)]
 pub struct Props {
-  #[props(required)]
   pub current: u32,
 }
 
@@ -75,7 +74,8 @@ impl Component for Posts {
             let mut ret = Vec::new();
             let (header, Json(body)) = response.into_parts();
             if let Err(err) = &body {
-              trace!("error: {:?}", err);
+              ret.push(Msg::Error(format!("{:?}", err)));
+              return ret;
             }
             if !header.status.is_success() {
               // TODO: get some hint
@@ -126,7 +126,7 @@ impl Component for Posts {
               .labels
               .clone()
               .into_iter()
-              .filter(|label| label.name != "blog")
+              .filter(|label| label.name != "Blog")
               .collect(),
             ..post
           })
