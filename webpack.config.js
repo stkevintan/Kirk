@@ -34,7 +34,8 @@ module.exports = ({ mode } = { mode: 'development' }) => {
     output: {
       filename: '[name].[contenthash:8].js',
       chunkFilename: '[name].[contenthash:8].async.js',
-      path: path.resolve(__dirname, 'dist')
+      publicPath: '/',
+      path: path.resolve(__dirname, 'public')
     },
     mode,
     module: {

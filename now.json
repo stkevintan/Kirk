@@ -1,0 +1,20 @@
+{
+  "regions": ["hnd1"],
+  "routes": [
+    { "handle": "filesystem" },
+    {
+      "src": "/",
+      "headers": { "Cache-Control": "no-cache" },
+      "continue": true
+    },
+    {
+      "src": "\\.wasm$",
+      "headers": { "Context-Type": "application/wasm" },
+      "continue": true
+    },
+    {
+      "src": "^((?!\\.(js|css|wasm|png|svg|jpg|ico)\\b).)*$",
+      "dest": "/index.html"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "name": "kirk",
-  "version": "0.1.0",
   "description": "create an app to consume rust-generated wasm packages",
   "scripts": {
     "build": "webpack --env.mode production",
+    "deploy": "now ./public --name kirk --token $NOW_TOKEN",
     "start": "webpack-dev-server --env.mode development"
   },
   "repository": {
@@ -33,6 +33,7 @@
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.8.0",
+    "now": "^16.5.2",
     "postcss-loader": "^3.0.0",
     "style-loader": "^1.0.0",
     "ts-loader": "^6.1.0",

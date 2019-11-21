@@ -12,7 +12,7 @@ pub struct CustomFetchService {
 impl Default for CustomFetchService {
   fn default() -> Self {
     Self {
-      token: concat!("81e7", "f49ac", "5d5b7", "20913d74a5b2f07cf6be93", "eaef"),
+      token: concat!("938367078c8b020c06ec486e636d1b471e2f", "9970"),
       fetch_service: FetchService::default(),
     }
   }
